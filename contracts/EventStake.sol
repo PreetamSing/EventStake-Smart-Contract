@@ -71,7 +71,8 @@ contract EventStake is OracleRelated {
     function selfAffirmation(uint256 Event) external override {
         require(
             People[msg.sender][Event].showedUp == attended.False &&
-                block.timestamp >= EventToAmountNTime[Event][1],
+                block.timestamp >= EventToAmountNTime[Event][1] &&
+                block.timestamp <= (EventToAmountNTime[Event][1] + 3600),
             "You are not a member of this event."
         );
         People[msg.sender][Event].showedUp = attended.True;
