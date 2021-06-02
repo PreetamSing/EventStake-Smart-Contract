@@ -2,21 +2,7 @@
 pragma solidity >=0.4.25;
 
 import "../../openzeppelin-contracts/contracts/access/Ownable.sol";
-
-// Event Stake Contract's Interface
-interface EventStakeInterface {
-    function distributeAmount(uint256 Event)
-        external
-        payable
-        returns (bool _success);
-
-    function callback(
-        address _creator,
-        uint32 _id,
-        uint256 _atTime,
-        uint256 _EventId
-    ) external;
-}
+import "./EventStakeInterface.sol";
 
 /* This seperate oracle formation may seem a bit overkill for this project,
 but in long run, it is more scalable as compared to direct integration of these
