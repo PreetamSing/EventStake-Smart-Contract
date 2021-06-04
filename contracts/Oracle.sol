@@ -21,6 +21,11 @@ contract Oracle is Ownable {
         uint256 atTime
     );
 
+    // Contract Destructor: Contract will no longer be available on blockchain
+    function destroyContract() external onlyOwner {
+        selfdestruct(payable(owner()));
+    }
+
     function getRandomEventId(uint256 _atTime, address _creator)
         external
         returns (uint32)

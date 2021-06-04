@@ -41,6 +41,11 @@ abstract contract Base is Ownable {
         // React to receiving ether
     }
 
+    // Contract Destructor: Contract will no longer be available on blockchain
+    function destroyContract() external onlyOwner {
+        selfdestruct(payable(owner()));
+    }
+
     // Inside OracleRelated.sol
     function distributeAmount(uint256 Event)
         external
