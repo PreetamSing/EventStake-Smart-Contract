@@ -1,16 +1,19 @@
-import React from 'react'
-import Web3 from "web3";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { Button, InputGroup } from 'react-bootstrap';
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import { abi } from "../abi/EventStake.json";
+import { setEventStake } from "../store/actions/web3Actions";
+import TimePicker from './TimePicker';
 
 function Interface() {
-    const web3 = new Web3(Web3.givenProvider);
-    const [accounts, setAccounts] = React.useState([]);
-    const contractAdd = "0x69FFd7B729a552edB2AACa3dFC836284D0dbE784";
-    const contract = new web3.eth.Contract(abi, contractAdd);
+    const { accounts, EventStake, web3 } = useSelector(state => state.web3State);
+    const [startDate, setStartDate] = useState(new Date());
+    const dispatch = useDispatch();
 
     const clickHandler = (e) => {
-        contract.methods.createAnEvent(123).send({
+        const eventTime = parseInt(startDate.getTime() / 1000);
+        EventStake.methods.createAnEvent(eventTime).send({
             from: accounts[0],
             value: web3.utils.toWei('0.001', 'ether')
         }).then((result) => {
@@ -20,18 +23,35 @@ function Interface() {
         });
     }
 
-    React.useEffect(async () => {
-        if (window.ethereum) {
-            await window.ethereum.send('eth_requestAccounts');
-            window.web3 = new Web3(window.ethereum);
-            web3.eth.getAccounts()
-                .then((accounts) => setAccounts(accounts))
-                .catch((err) => console.log(err));
+    useEffect(() => {
+        dispatch(setEventStake());
+    }, [dispatch])
+    useEffect(() => {
+        if (EventStake) {
+            EventStake.events.newEventCreated({
+                filter: {
+                    creator: accounts[0]
+                },
+                fromBlock: 0
+            }).on('data', function (event) {
+                console.log(event); // same results as the optional callback
+                })
+                .on('changed', function (event) {
+                    // remove event from local database
+                })
+                .on('error', console.error);
         }
-    }, [Web3])
+    }, [EventStake])
+
     return (
-        <div>
-            <button onClick={clickHandler}>createAnEvent</button>
+        <div className="d-flex flex-column justify-content-center">
+            <InputGroup className="mb-3">
+                <InputGroup.Prepend>
+                    <InputGroup.Text id="basic-addon1">Event Time</InputGroup.Text>
+                </InputGroup.Prepend>
+                <TimePicker startDate={startDate} setStartDate={setStartDate} />
+            </InputGroup>
+            <Button variant="primary" className="m-auto" onClick={clickHandler}>createAnEvent</Button>
         </div>
     )
 }

@@ -1,0 +1,4 @@
+export const SET_WEB3 = "SET_WEB3";
+export const SET_ACCOUNTS = "SET_ACCOUNTS";
+export const GET_ACCOUNTS_SAGA = "GET_ACCOUNTS_SAGA";
+export const SET_EVENTSTAKE = "SET_EVENTSTAKE";
